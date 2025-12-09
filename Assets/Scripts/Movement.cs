@@ -1,10 +1,18 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class PlayerMovement : MonoBehaviour
+
+
+
+public class Movement : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpForce = 10f;
     public LayerMask groundLayer;
+    public Transform groundCheckTransform;
+    public float groundCheckRadius;
+    public Transform sprite;
 
     private Rigidbody2D rb;
     private bool isGrounded;
@@ -17,15 +25,26 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isDead) return; 
-        
+        if (isDead) return;
+
         rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
-        
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, groundLayer);
-        
-        if (Input.GetMouseButtonDown(0) && isGrounded)
+
+        isGrounded = Physics2D.OverlapCircle(groundCheckTransform.position, groundCheckRadius, groundLayer);
+
+        if (isGrounded)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            Vector3 rotation = sprite.rotation.eulerAngles;
+            rotation.z = Mathf.Round(rotation.z / 90) * 90;
+            sprite.rotation = Quaternion.Euler(rotation);
+
+            if (Input.GetMouseButton(0))
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            }
+        }
+        else
+        {
+            sprite.Rotate(Vector3.back * 2);
         }
     }
 
@@ -33,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Spike"))
         {
-            Die(); 
+            Die();
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Block"))
@@ -43,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
                 if (hit.normal.y < 0.2f)
                 {
                     Die();
-                    return; 
+                    return;
                 }
             }
         }
@@ -58,5 +77,12 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = Vector2.zero;
         rb.isKinematic = true;
+        
+        RestartLevel();
+    }
+
+    void RestartLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
