@@ -23539,7 +23539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Plane
   speed: 8
-  flyForce: 12
+  flyForce: 15
 --- !u!1 &2032234922
 GameObject:
   m_ObjectHideFlags: 0
