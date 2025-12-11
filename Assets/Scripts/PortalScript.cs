@@ -28,6 +28,7 @@ public class PortalScript : MonoBehaviour
 
     void ActivatePlane()
     {
+        Camera.main.GetComponent<CameraController>().planeMode = true;
         plane.transform.position = cube.transform.position;
         
         cube.SetActive(false);
@@ -40,6 +41,7 @@ public class PortalScript : MonoBehaviour
 
     void ActivateCube()
     {
+        Camera.main.GetComponent<CameraController>().planeMode = false;
         cube.transform.position = plane.transform.position;
         
         plane.SetActive(false);
